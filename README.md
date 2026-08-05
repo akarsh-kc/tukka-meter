@@ -5,7 +5,7 @@ A simple tracker to log your SSC mock test performance and analyze your mistakes
 🔒 **Your data stays on your own device.** Nothing is uploaded, tracked, or shared with anyone. No login, no account, no data collection.
 
 ⚠️ **Note:** the app comes preloaded with sample/demo data so you can see how it works. Please delete this sample data first, then start adding your own mocks.
-![Mobile 3](mobile1.jpg)
+![Mobile 3](mobile3.jpg)
 
 
 📱 **Install as an app (Android):** Download the APK from the [Releases](../../releases) section.
@@ -13,7 +13,7 @@ A simple tracker to log your SSC mock test performance and analyze your mistakes
 
 ### 📱 Screenshots
 ![Mobile 2](mobile2.jpg)
-![Mobile 1](mobile3.jpg)
+![Mobile 1](mobile1.jpg)
 
 ## What it does
 - Log your SSC mock test scores and track performance over time
