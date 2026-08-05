@@ -26,8 +26,8 @@ A simple tracker to log your SSC mock test performance and analyze your mistakes
 
 ## Why it's safe to use
 - No sign-up, no account, no personal information asked
-- No ads, no tracking
-- Your data lives only in your own browser/phone — not on any server
+- Your data lives only in your own browser/phone
+- - The only time this app connects to the internet is if you choose to sync with Google Sheets — entirely optional, off by default, and never automatic
 
 ## How to use
 1. **First, clear the sample/demo data that comes pre-loaded**
