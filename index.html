@@ -366,9 +366,6 @@
             <button onclick="showIndividualView()" id="nav-individual-btn" class="nav-pill" style="--pill-a:#a855f7;--pill-b:#ec4899;--pill-glow:rgba(168,85,247,.55)" title="Individual Mock Analyzer">
                 <span class="nav-icon-wrap"><i class="fa-solid fa-magnifying-glass-chart"></i></span><span class="hidden lg:inline">Individual Mock Analyzer</span><span class="nav-active-dot hidden lg:block"></span>
             </button>
-            <button onclick="showAttemptedView()" id="nav-attempted-btn" class="nav-pill" style="--pill-a:#0891b2;--pill-b:#22d3ee;--pill-glow:rgba(8,145,178,.55)" title="Attempted Mocks">
-                <span class="nav-icon-wrap"><i class="fa-solid fa-clock-rotate-left"></i></span><span class="hidden lg:inline">Attempted Mocks</span><span class="nav-active-dot hidden lg:block"></span>
-            </button>
             <div class="nav-divider"></div>
             <button onclick="openSyncModal()" id="sync-status-btn" class="nav-pill" title="Cloud Sync Settings">
                 <span class="nav-icon-wrap"><i id="sync-status-icon" class="fa-solid fa-cloud"></i></span><span id="sync-status-text" class="hidden lg:inline">Sync Off</span>
@@ -570,43 +567,18 @@
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
             <div class="lg:col-span-3 glass-panel rounded-2xl p-3 h-fit lg:sticky lg:top-4">
-                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-2 pb-2">All Mocks</p>
-                <div id="individual-mock-sidebar" class="flex flex-col gap-1 lg:max-h-[70vh] lg:overflow-y-auto pr-1"></div>
+                <div class="flex items-center justify-between px-2 pb-2">
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">All Mocks</p>
+                    <span id="individual-count-badge" class="shrink-0 text-[10px] font-bold text-brand-700 bg-brand-50 border border-brand-200 rounded px-1.5 py-0.5 whitespace-nowrap">0</span>
+                </div>
+                <div class="relative mb-2">
+                    <i class="fa-solid fa-magnifying-glass w-4 h-4 absolute left-3 top-2.5 text-slate-400 text-xs"></i>
+                    <input type="text" id="individual-search" placeholder="Search test name or notes..." oninput="renderIndividualSidebar()" class="w-full pl-8 pr-3 py-2 text-xs bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500">
+                </div>
+                <div id="individual-mock-sidebar" class="flex flex-col gap-1 lg:max-h-[65vh] lg:overflow-y-auto pr-1"></div>
             </div>
             <div id="individual-mock-content" class="lg:col-span-9 space-y-4">
                 <!-- Populated by JS -->
-            </div>
-        </div>
-    </section>
-
-    <!-- ATTEMPTED MOCKS VIEW -->
-    <section id="attempted-view" class="hidden flex-1 max-w-7xl w-full mx-auto p-4 lg:p-6">
-        <div class="flex items-center justify-between mb-4">
-            <div class="flex items-center gap-3">
-                <button onclick="goHome()" class="w-9 h-9 flex items-center justify-center rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 shadow-sm transition-all"><i class="fa-solid fa-arrow-left"></i></button>
-                <div>
-                    <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2"><i class="fa-solid fa-clock-rotate-left text-brand-600"></i> Attempted Mocks</h2>
-                    <p class="text-xs text-slate-500 font-medium">Every mock you've logged — search, edit or drill into any entry.</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
-            <div class="lg:col-span-4 glass-panel p-4 rounded-2xl flex flex-col space-y-3">
-                <div class="flex items-center justify-between gap-2">
-                    <div class="relative flex-1">
-                        <i class="fa-solid fa-magnifying-glass w-4 h-4 absolute left-3 top-2.5 text-slate-400 text-xs"></i>
-                        <input type="text" id="attempted-search" placeholder="Search test name or notes..." oninput="renderAttemptedList()" class="w-full pl-8 pr-3 py-2 text-xs bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500">
-                    </div>
-                    <span id="attempted-count-badge" class="shrink-0 px-2.5 py-1.5 bg-brand-50 text-brand-700 text-xs font-bold rounded-lg border border-brand-200 whitespace-nowrap">0 Mocks</span>
-                </div>
-                <div id="attempted-list-container" class="space-y-2 overflow-y-auto max-h-[65vh] pr-1"></div>
-            </div>
-
-            <div class="lg:col-span-8 glass-panel p-5 rounded-2xl flex flex-col space-y-4">
-                <div id="attempted-detail-container" class="space-y-4">
-                    <p class="text-sm text-slate-400 text-center py-16">Select a mock from the left to view its full breakdown.</p>
-                </div>
             </div>
         </div>
     </section>
@@ -998,7 +970,6 @@
         let mockData = [];
         let chartInstances = {};
         let selectedIndividualId = null;
-        let selectedAttemptedId = null;
         let pendingConfirmAction = null;
         let syncDebounceTimer = null;
 
@@ -1046,10 +1017,8 @@
 
             if (mockData.length > 0) {
                 selectedIndividualId = mockData[mockData.length - 1].id;
-                selectedAttemptedId = mockData[mockData.length - 1].id;
             } else {
                 selectedIndividualId = null;
-                selectedAttemptedId = null;
             }
         }
 
@@ -1097,7 +1066,7 @@
         }
 
         function hideAllViews() {
-            ['dashboard-main', 'individual-view', 'attempted-view', 'about-view', 'backup-view'].forEach(id => {
+            ['dashboard-main', 'individual-view', 'about-view', 'backup-view'].forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.classList.add('hidden');
             });
@@ -1117,15 +1086,6 @@
             if (!selectedIndividualId && mockData.length) selectedIndividualId = sortedMocks()[sortedMocks().length - 1].id;
             renderIndividualSidebar();
             renderIndividualContent();
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        function showAttemptedView() {
-            hideAllViews();
-            document.getElementById('attempted-view').classList.remove('hidden');
-            setActiveNav('nav-attempted-btn');
-            renderAttemptedList();
-            renderAttemptedDetail();
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
@@ -1511,7 +1471,6 @@
             initCharts();
             renderDashboard();
             if (!document.getElementById('individual-view').classList.contains('hidden')) { renderIndividualSidebar(); renderIndividualContent(); }
-            if (!document.getElementById('attempted-view').classList.contains('hidden')) { renderAttemptedList(); renderAttemptedDetail(); }
             closeExamSwitchModal();
             goHome();
             showToast(`Switched to ${currentExam().name}`, 'success');
@@ -1535,11 +1494,23 @@
             renderIndividualContent();
         }
 
+        function getIndividualFiltered() {
+            const term = (document.getElementById('individual-search')?.value || '').toLowerCase();
+            const list = sortedMocks().slice().reverse();
+            if (!term) return list;
+            return list.filter(m => m.testName.toLowerCase().includes(term) || (m.notes && m.notes.toLowerCase().includes(term)));
+        }
+
         function renderIndividualSidebar() {
             const container = document.getElementById('individual-mock-sidebar');
-            const list = sortedMocks();
-            if (!list.length) { container.innerHTML = `<p class="text-xs text-slate-400 px-2 py-4 text-center">No mocks logged yet.</p>`; return; }
-            container.innerHTML = list.slice().reverse().map(m => `
+            const badge = document.getElementById('individual-count-badge');
+            if (badge) badge.textContent = `${mockData.length}`;
+            const list = getIndividualFiltered();
+            if (!list.length) {
+                container.innerHTML = `<p class="text-xs text-slate-400 px-2 py-4 text-center">${mockData.length ? 'No mocks found.' : 'No mocks logged yet.'}</p>`;
+                return;
+            }
+            container.innerHTML = list.map(m => `
                 <button onclick="selectIndividualMock('${m.id}')" class="w-full text-left px-3 py-2.5 rounded-xl border transition-all ${m.id === selectedIndividualId ? 'bg-gradient-to-r from-brand-600 to-indigo-600 text-white border-transparent shadow-glow' : 'bg-white hover:bg-slate-50 border-slate-200 text-slate-700'}">
                     <p class="text-xs font-bold truncate">Mock-${m.mockNo}: ${m.testName}</p>
                     <p class="text-[10px] ${m.id === selectedIndividualId ? 'text-white/80' : 'text-slate-400'} mt-0.5">${m.date} • Score ${m.score.toFixed(1)}</p>
@@ -1622,78 +1593,6 @@
             `;
         }
 
-        // ================= ATTEMPTED MOCKS VIEW =================
-        function getAttemptedFiltered() {
-            const term = (document.getElementById('attempted-search')?.value || '').toLowerCase();
-            return sortedMocks().slice().reverse().filter(m => m.testName.toLowerCase().includes(term) || (m.notes && m.notes.toLowerCase().includes(term)));
-        }
-
-        function renderAttemptedList() {
-            const list = getAttemptedFiltered();
-            document.getElementById('attempted-count-badge').textContent = `${mockData.length} Mocks`;
-            const container = document.getElementById('attempted-list-container');
-            if (!list.length) { container.innerHTML = `<p class="text-xs text-slate-400 text-center py-8">No mocks found.</p>`; return; }
-            container.innerHTML = list.map(m => {
-                const accuracy = getAccuracy(m.correct, m.attempted);
-                let scoreClass = "text-slate-700";
-                if (m.score >= 150) scoreClass = "text-purple-600"; else if (m.score >= 130) scoreClass = "text-emerald-600"; else if (m.score < 115) scoreClass = "text-rose-600";
-                return `
-                <button onclick="selectAttemptedMock('${m.id}')" class="w-full text-left p-3 rounded-xl border transition-all ${m.id === selectedAttemptedId ? 'bg-brand-50 border-brand-300 shadow-sm' : 'bg-white hover:bg-slate-50 border-slate-200'}">
-                    <div class="flex items-center justify-between gap-2">
-                        <p class="text-xs font-bold text-slate-800 truncate">Mock-${m.mockNo}: ${m.testName}</p>
-                        <span class="text-xs font-extrabold ${scoreClass} shrink-0">${m.score.toFixed(1)}</span>
-                    </div>
-                    <div class="flex items-center gap-3 mt-1 text-[10px] text-slate-400">
-                        <span>${m.date}</span><span>•</span><span>${accuracy}% acc</span><span>•</span><span>${m.percentile}%ile</span>
-                    </div>
-                </button>`;
-            }).join('');
-        }
-
-        function selectAttemptedMock(id) {
-            selectedAttemptedId = id;
-            renderAttemptedList();
-            renderAttemptedDetail();
-        }
-
-        function renderAttemptedDetail() {
-            const container = document.getElementById('attempted-detail-container');
-            const mock = mockData.find(m => m.id === selectedAttemptedId);
-            if (!mock) { container.innerHTML = `<p class="text-sm text-slate-400 text-center py-16">Select a mock from the left to view its full breakdown.</p>`; return; }
-            const accuracy = getAccuracy(mock.correct, mock.attempted);
-            container.innerHTML = `
-                <div class="flex flex-wrap items-start justify-between gap-3 border-b border-slate-200 pb-3">
-                    <div>
-                        <span class="text-[10px] font-bold uppercase tracking-wide text-brand-600 bg-brand-50 border border-brand-100 rounded px-2 py-0.5">Mock-${mock.mockNo}</span>
-                        <h3 class="text-base font-bold text-slate-900 mt-1.5">${mock.testName}</h3>
-                        <p class="text-xs text-slate-500">${mock.date}</p>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <button onclick="openMockModal('${mock.id}')" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-lg transition flex items-center gap-1.5"><i class="fa-solid fa-pen"></i> Edit</button>
-                        <button onclick="confirmDeleteMock('${mock.id}')" class="px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-semibold rounded-lg transition flex items-center gap-1.5"><i class="fa-solid fa-trash"></i> Delete</button>
-                    </div>
-                </div>
-                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                    <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 text-center"><p class="text-[10px] text-slate-500 font-semibold uppercase">Score</p><p class="text-lg font-extrabold text-slate-800">${mock.score.toFixed(1)} / ${mock.maxScore}</p></div>
-                    <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 text-center"><p class="text-[10px] text-slate-500 font-semibold uppercase">Percentile</p><p class="text-lg font-extrabold text-amber-600">${mock.percentile}%</p></div>
-                    <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 text-center"><p class="text-[10px] text-slate-500 font-semibold uppercase">Accuracy</p><p class="text-lg font-extrabold text-indigo-600">${accuracy}%</p></div>
-                    <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 text-center"><p class="text-[10px] text-slate-500 font-semibold uppercase">Negatives</p><p class="text-lg font-extrabold text-rose-600">-${mock.negativeMarks.toFixed(1)}</p></div>
-                </div>
-                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
-                    ${currentExam().subjects.map(s => `<div class="p-3 rounded-xl bg-${s.color}-50/50 border border-${s.color}-100"><p class="text-[10px] text-${s.color}-700 font-semibold uppercase">${s.label}</p><p class="text-base font-extrabold text-${s.color}-700">${mock.subjects && mock.subjects[s.key] != null ? mock.subjects[s.key] : '-'}</p></div>`).join('')}
-                </div>
-                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
-                    <div class="p-2.5 rounded-lg bg-emerald-50 border border-emerald-100"><p class="text-[10px] text-emerald-700 font-semibold uppercase">Correct</p><p class="text-sm font-bold text-emerald-700">${mock.correct}</p></div>
-                    <div class="p-2.5 rounded-lg bg-rose-50 border border-rose-100"><p class="text-[10px] text-rose-700 font-semibold uppercase">Wrong</p><p class="text-sm font-bold text-rose-700">${mock.wrong}</p></div>
-                    <div class="p-2.5 rounded-lg bg-slate-100 border border-slate-200"><p class="text-[10px] text-slate-600 font-semibold uppercase">Unattempted</p><p class="text-sm font-bold text-slate-700">${mock.unattempted}</p></div>
-                    <div class="p-2.5 rounded-lg bg-indigo-50 border border-indigo-100"><p class="text-[10px] text-indigo-700 font-semibold uppercase">Attempted</p><p class="text-sm font-bold text-indigo-700">${mock.attempted}</p></div>
-                </div>
-                <div class="pt-2 border-t border-slate-200">
-                    <h4 class="text-xs font-bold text-slate-900 mb-1.5 flex items-center gap-2"><i class="fa-solid fa-note-sticky text-brand-600"></i> Notes</h4>
-                    <p class="text-xs text-slate-600 leading-relaxed">${mock.notes ? mock.notes : '<span class="text-slate-400">No notes added for this mock.</span>'}</p>
-                </div>
-            `;
-        }
 
         // ================= ADD / EDIT MOCK MODAL =================
         function renderSubjectFieldsGrid(existingSubjects) {
@@ -1812,13 +1711,11 @@
             if (existingIdx !== -1) mockData[existingIdx] = record; else mockData.push(record);
 
             selectedIndividualId = record.id;
-            selectedAttemptedId = record.id;
 
             closeMockModal();
             saveDataToStorage();
             renderDashboard();
             if (!document.getElementById('individual-view').classList.contains('hidden')) { renderIndividualSidebar(); renderIndividualContent(); }
-            if (!document.getElementById('attempted-view').classList.contains('hidden')) { renderAttemptedList(); renderAttemptedDetail(); }
             showToast(existingIdx !== -1 ? 'Mock record updated!' : 'New mock added!', 'success');
         }
 
@@ -1828,11 +1725,9 @@
             showConfirmModal('Delete Mock?', `This will permanently delete "${mock.testName}" (Mock-${mock.mockNo}). This cannot be undone.`, () => {
                 mockData = mockData.filter(m => m.id !== id);
                 if (selectedIndividualId === id) selectedIndividualId = mockData.length ? sortedMocks()[sortedMocks().length - 1].id : null;
-                if (selectedAttemptedId === id) selectedAttemptedId = mockData.length ? sortedMocks()[sortedMocks().length - 1].id : null;
                 saveDataToStorage();
                 renderDashboard();
                 renderIndividualSidebar(); renderIndividualContent();
-                renderAttemptedList(); renderAttemptedDetail();
                 showToast(`Deleted ${mock.testName}`, 'info');
             });
         }
@@ -1872,7 +1767,6 @@
                     migrateMockSubjects();
                     localStorage.setItem(getStorageKey(currentExamId), JSON.stringify(mockData));
                     selectedIndividualId = mockData.length ? sortedMocks()[sortedMocks().length - 1].id : null;
-                    selectedAttemptedId = selectedIndividualId;
                     renderDashboard();
                     pushToCloud();
                     goHome();
@@ -1945,7 +1839,7 @@
                     mockData = data.mockData.map(m => ({ id: m.id || genId(), ...m }));
                     migrateMockSubjects();
                     localStorage.setItem(getStorageKey(currentExamId), JSON.stringify(mockData));
-                    if (mockData.length) { selectedIndividualId = sortedMocks()[sortedMocks().length - 1].id; selectedAttemptedId = selectedIndividualId; }
+                    if (mockData.length) { selectedIndividualId = sortedMocks()[sortedMocks().length - 1].id; }
                     renderDashboard();
                 }
                 updateSyncStatus('synced', 'Synced just now');

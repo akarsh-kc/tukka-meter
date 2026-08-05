@@ -1,5 +1,5 @@
 // Bump this on every deploy (or automate it — see notes below).
-const CACHE_NAME = "cgl-maths-cache-v14";
+const CACHE_NAME = "cgl-maths-cache-v15";
 const CORE_ASSETS = [
   "./index.html",
   "./manifest.json",
