@@ -5,10 +5,15 @@ A simple tracker to log your SSC mock test performance and analyze your mistakes
 🔒 **Your data stays on your own device.** Nothing is uploaded, tracked, or shared with anyone. No login, no account, no data collection.
 
 ⚠️ **Note:** the app comes preloaded with sample/demo data so you can see how it works. Please delete this sample data first, then start adding your own mocks.
-
+![Mobile 3](mobile1.jpg)
 
 
 📱 **Install as an app (Android):** Download the APK from the [Releases](../../releases) section.
+⚠️ **Note on installing the APK:** since this isn't from the Google Play Store, Android will show a warning like *"Install blocked"* or *"Unknown app installed for your security"* when you first try to install it. This is normal for any app shared outside the Play Store — just tap **"Install anyway"** or enable **"Allow from this source"** when prompted. The app itself is safe; this warning appears for any APK not downloaded from Play Store.
+
+### 📱 Screenshots
+![Mobile 2](mobile2.jpg)
+![Mobile 1](mobile3.jpg)
 
 ## What it does
 - Log your SSC mock test scores and track performance over time
