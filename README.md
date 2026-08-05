@@ -5,6 +5,7 @@ A simple tracker to log your SSC mock test performance and analyze your mistakes
 🔒 **Your data stays on your own device.** Nothing is uploaded, tracked, or shared with anyone. No login, no account, no data collection.
 
 ⚠️ **Note:** the app comes preloaded with sample/demo data so you can see how it works. Please delete this sample data first, then start adding your own mocks.
+- The only permission the app may ever ask for is to import a JSON file, if you choose to use that feature — completely optional, never required
 
 ![Mobile 3](mobile3.jpg)
 
